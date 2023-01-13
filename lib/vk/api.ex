@@ -6,8 +6,8 @@ defmodule VK.API do
   @api_server URI.new!("https://api.vk.com/method/")
   @version File.read!("priv/vk-api-schema/.version")
 
-  @spec method_request(String.t() | URI.t(), keyword(), keyword()) ::
-          {:ok, map()} | {:error, any()}
+  @spec method_request(String.t() | URI.t(), map() | keyword(), keyword()) ::
+          {:ok, map() | list(map())} | {:error, any()}
   @doc """
   Sends method to vk api server with given parameters.
   """
@@ -25,7 +25,7 @@ defmodule VK.API do
     do_method_request(method, params, opts)
   end
 
-  def do_method_request(method, params, opts) do
+  defp do_method_request(method, params, opts) do
     uri =
       @api_server
       |> URI.merge(method)
@@ -35,7 +35,7 @@ defmodule VK.API do
     |> request(opts)
   end
 
-  @spec request(Finch.Request.t(), keyword()) :: {:ok, map()} | {:error, any()}
+  @spec request(Finch.Request.t(), keyword()) :: {:ok, map() | list(map())} | {:error, any()}
   @doc """
   Executes request and parse vk response.
   """

@@ -22,7 +22,7 @@ defmodule VK.Methods.Loader do
     fun_name = vk_method_to_function_name(method_name)
 
     quote do
-      @spec unquote(fun_name)(map() | Keyword.t()) :: {:ok, map()} | {:error, any()}
+      @spec unquote(fun_name)(map() | Keyword.t()) :: {:ok, map() | list(map())} | {:error, any()}
       @doc unquote(generate_documentation(method))
       def unquote(fun_name)(params) when is_list(params) when is_map(params) do
         VK.API.method_request(unquote(method_name), params)
