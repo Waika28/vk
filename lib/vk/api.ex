@@ -29,18 +29,20 @@ defmodule VK.API do
   """
   def request(%Finch.Request{} = request, opts \\ []) do
     with {:ok, http_response} <- Finch.request(request, __MODULE__, opts),
-         {:ok, data} <- Jason.decode(http_response.body) do
-      response =
-        if Map.has_key?(data, "response") do
-          data["response"]
-        else
-          data
-        end
-
+         {:ok, data} <- Jason.decode(http_response.body),
+         {:ok, response} <- parse_vk_response(data) do
       {:ok, response}
     else
       %{"error" => error} -> {:error, error}
       {:error, _} = error -> error
+    end
+  end
+
+  defp parse_vk_response(response) do
+    if Map.has_key?(response, "error") do
+      {:error, response["error"]}
+    else
+      {:ok, response["response"] || response}
     end
   end
 
@@ -50,7 +52,7 @@ defmodule VK.API do
   """
   def require_keys(map, fields), do: Enum.each(fields, &require_key(map, &1))
 
-  @spec require_key(map(), list(any())) :: :ok | none()
+  @spec require_key(keyword(), any()) :: :ok | none()
   @doc """
   Return `:ok` if fields present in map otherwise throw exception.
   """
