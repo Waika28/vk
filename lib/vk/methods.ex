@@ -1,4 +1,3 @@
 defmodule VK.Methods do
-  @moduledoc false
-  use VK.Methods.Loader, path: "priv/vk-api-schema"
+  use VK.SchemaLoader, type: :methods
 end
