@@ -2,59 +2,12 @@ defmodule VK.API do
   @moduledoc """
   This module contains all methods from VK API schema.
   """
-  @vk_api_schema_path "priv/vk-api-schema"
-
-  for dir <- File.ls!("priv/vk-api-schema") do
-    methods_path = Path.join([@vk_api_schema_path, dir, "methods.json"])
-
-    if File.exists?(methods_path) do
-      methods =
-        File.read!(methods_path)
-        |> Jason.decode!()
-        |> Map.get("methods")
-
-      for method <- methods do
-        method_name = method["name"]
-
-        fun_name =
-          method_name
-          |> String.replace(".", "_")
-          |> Macro.underscore()
-          |> String.to_atom()
-
-        method_params = method["parameters"]
-
-        required_fields =
-          [:access_token] ++
-            if method_params do
-              for param <- method_params,
-                  param["required"],
-                  do: String.to_atom(param["name"])
-            else
-              []
-            end
-
-        @doc """
-        #{method["description"]}
-
-        Parameters:
-
-        #{Enum.map_join(method["parameters"] || [], "\n\n", fn param ->
-          ~s(`#{param["name"]}` - #{String.replace(param["description"] || "", "'", "`")})
-        end)}
-        """
-        def unquote(fun_name)(params) when is_list(params) do
-          require_keys(params, unquote(required_fields))
-          VK.API.method_request(unquote(method_name), params)
-        end
-      end
-    end
-  end
 
   @api_server URI.new!("https://api.vk.com/method/")
-  @version File.read!("#{@vk_api_schema_path}/.version")
+  @version File.read!("priv/vk-api-schema/.version")
 
-  @spec method_request(String.t() | URI.t(), keyword()) :: {:ok, map()} | {:error, any()}
+  @spec method_request(String.t() | URI.t(), keyword(), keyword()) ::
+          {:ok, map()} | {:error, any()}
   @doc """
   Sends method to vk api server with given parameters.
   """
@@ -105,6 +58,7 @@ defmodule VK.API do
     unless Keyword.has_key?(map, field) do
       throw("Key #{field} is required")
     end
+
     :ok
   end
 end

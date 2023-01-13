@@ -1,6 +1,6 @@
 alias VK.Longpoll
-import VK.API
-require VK.API
+import VK.Methods
+require VK.Methods
 
 loaded? =
   Code.ensure_compiled(Helpers)
