@@ -1,4 +1,5 @@
 defmodule VK.SchemaLoader do
+  @moduledoc false
   @vk_chema_path "priv/vk-api-schema"
 
   defmacro __using__(opts) do
