@@ -11,9 +11,21 @@ defmodule VK.API do
   @doc """
   Sends method to vk api server with given parameters.
   """
-  def method_request(method, params, opts \\ []) do
+  def method_request(method, params, opts \\ [])
+
+  def method_request(method, params, opts) when is_list(params) do
     params = Keyword.put_new(params, :v, @version)
 
+    do_method_request(method, params, opts)
+  end
+
+  def method_request(method, params, opts) when is_map(params) do
+    params = Map.put_new(params, "v", @version)
+
+    do_method_request(method, params, opts)
+  end
+
+  def do_method_request(method, params, opts) do
     uri =
       @api_server
       |> URI.merge(method)
