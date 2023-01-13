@@ -24,6 +24,7 @@ defmodule VK.MixProject do
     [
       {:finch, "~> 0.14"},
       {:jason, "~> 1.4"},
+      {:multipart, "~> 0.3"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:ex_doc, "~> 0.21", only: :dev, runtime: false}
