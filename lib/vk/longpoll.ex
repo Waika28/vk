@@ -41,7 +41,7 @@ defmodule VK.Longpoll do
   def await(%__MODULE__{} = lp_data) do
     request = Finch.build(:post, url(lp_data), [{"Content-Length", "0"}])
 
-    case VK.API.request(request, receive_timeout: 25_250) do
+    case VK.API.request(request, receive_timeout: 40_000) do
       {:ok, %{"ts" => new_ts, "updates" => response}} ->
         {:ok, Map.put(lp_data, :ts, new_ts), response}
 
